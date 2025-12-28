@@ -1,0 +1,25 @@
+name: Update Grandpa Tracker
+on:
+  schedule:
+    - cron: '0 * * * *' # Runs every hour (to stay under 100 free API calls)
+  workflow_dispatch: # Allows you to click a button to refresh manually
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with: { python-version: '3.9' }
+      - name: Install dependencies
+        run: pip install requests edge-tts
+      - name: Run Script
+        env: { AVIATIONSTACK_KEY: ${{secrets.AVIATIONSTACK_KEY}} }
+        run: python tracker.py
+      - name: Upload to GitHub Pages
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Update flight audio"
+          file_pattern: status.mp3
