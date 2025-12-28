@@ -1,25 +1,37 @@
-name: Update Flight Tracker
+name: Update Grandpa Tracker
 on:
   schedule:
     - cron: '*/15 * * * *' # Every 15 minutes
-  workflow_dispatch: # Allows you to click a button to refresh manually
+  push:
+    branches:
+      - main # Runs immediately when you save/push code
+  workflow_dispatch: # Adds a manual "Run" button in GitHub Actions tab
+
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
-        with: { python-version: '3.9' }
+        with:
+          python-version: '3.9'
+
       - name: Install dependencies
-        run: pip install requests edge-tts
+        run: |
+          pip install requests edge-tts
+
       - name: Run Script
-        env: { AVIATIONSTACK_KEY: ${{secrets.AVIATIONSTACK_KEY}} }
+        env:
+          AVIATIONSTACK_KEY: ${{ secrets.AVIATIONSTACK_KEY }}
         run: python tracker.py
-      - name: Upload to GitHub Pages
+
+      - name: Commit and Push Audio
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          commit_message: "Update flight audio"
+          commit_message: "Update flight status audio"
           file_pattern: status.mp3
