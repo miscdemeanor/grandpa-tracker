@@ -1,7 +1,7 @@
-name: Update Grandpa Tracker
+name: Update Flight Tracker
 on:
   schedule:
-    - cron: '0 * * * *' # Runs every hour (to stay under 100 free API calls)
+    - cron: '*/15 * * * *' # Every 15 minutes
   workflow_dispatch: # Allows you to click a button to refresh manually
 jobs:
   build:
